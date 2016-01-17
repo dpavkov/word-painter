@@ -1,12 +1,14 @@
 require 'sinatra'
 require 'json'
 require "sinatra/json"
+require "rest-client"
 
 post '/paint', provides: 'json' do
   body = JSON.parse request.body.read
   validation_result = validate(body)
   if validation_result.nil?
     color = pick_color(body["random_color"])
+    send_word(body['word'], color)
     json chosen: color
   else
     status 400
@@ -38,4 +40,9 @@ end
 # http://stackoverflow.com/questions/3028243/check-if-ruby-object-is-a-boolean
 def is_bool input
   !!input == input
+end
+
+def send_word(word, color)
+  word_painter_url = "#{ENV['SOCKET_CALLER_URL']}/do-stream"
+  RestClient.post word_painter_url, { 'word' => word, 'color' => color }.to_json, :content_type => :json, :accept => :json
 end
