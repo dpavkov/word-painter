@@ -22,31 +22,38 @@ end
 
 RSpec.describe "#validate" do
   context "with valid input" do
-    let (:input) { { "word" => "word", "random_color" => true} }
+    let (:input) { { "word" => "word", "random_color" => true, "channel" => "channel"} }
     it "should return nil" do
       validation_result = validate(input)
       expect(validation_result).to eq nil
     end
   end
   context "without word" do
-    let (:input) { { "word" => "", "random_color" => true} }
+    let (:input) { { "word" => "", "random_color" => true, "channel" => "channel"} }
     it "should return nil" do
       validation_result = validate(input)
       expect(validation_result).to eq "no streaming without the word"
     end
   end
   context "without color" do
-    let (:input) { { "word" => "word"} }
+    let (:input) { { "word" => "word", "channel" => "channel"} }
     it "should return nil" do
       validation_result = validate(input)
       expect(validation_result).to eq "no streaming without random color"
     end
   end
   context "with improper color" do
-    let (:input) { { "word" => "word", "random_color" => "true" } }
+    let (:input) { { "word" => "word", "random_color" => "true", "channel" => "channel" } }
     it "should return nil" do
       validation_result = validate(input)
       expect(validation_result).to eq "color is random or it isn't no other option"
+    end
+  end
+  context "with no channel" do
+    let (:input) { { "word" => "word", "random_color" => true, "channel" => "" } }
+    it "should return nil" do
+      validation_result = validate(input)
+      expect(validation_result).to eq "no streaming without channel, we wouldn't know where to stream"
     end
   end
 end
