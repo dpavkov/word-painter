@@ -8,7 +8,7 @@ post '/paint', provides: 'json' do
   validation_result = validate(body)
   if validation_result.nil?
     color = pick_color(body["random_color"])
-    send_word(body['word'], color, body['channel'])
+    send_word(body, color)
     json chosen: color
   else
     status 400
@@ -44,7 +44,7 @@ def is_bool input
   !!input == input
 end
 
-def send_word(word, color, channel)
+def send_word(body, color)
   word_painter_url = "#{ENV['SOCKET_CALLER_URL']}/do-stream"
-  RestClient.post word_painter_url, { 'word' => word, 'color' => color, 'channel' => channel }.to_json, :content_type => :json, :accept => :json
+  RestClient.post word_painter_url, { 'word' => body['word'], 'color' => color, 'channel' => body['channel'], 'last' => body['last'] }.to_json, :content_type => :json, :accept => :json
 end
